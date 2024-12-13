@@ -1,68 +1,57 @@
 #include <iostream>
+#include <cmath> // for ceil()
 #include <iomanip>
 using namespace std;
 
-// Function to get a valid score from the user
-double getJudgeScore(int judgeNumber) {
-    double score;
+// Function to get a positive number from the user
+double getPositiveInput(string prompt, double minValue) {
+    double value;
     do {
-        cout << "Enter score for judge " << judgeNumber << " (0-10): ";
-        cin >> score;
-        if (score < 0 || score > 10) {
-            cout << "Error: Score must be between 0 and 10. Please try again." << endl;
+        cout << prompt;
+        cin >> value;
+        if (value < minValue) {
+            cout << "Error: Value must be at least " << minValue << ". Please try again." << endl;
         }
-    } while (score < 0 || score > 10);
-    return score;
+    } while (value < minValue);
+    return value;
 }
 
-// Function to find the highest score
-double findHighest(double scores[], int size) {
-    double highest = scores[0];
-    for (int i = 1; i < size; i++) {
-        if (scores[i] > highest) {
-            highest = scores[i];
-        }
+// Function to calculate the total wall space
+double calculateWallSpace(int rooms) {
+    double totalWallSpace = 0;
+    for (int i = 1; i <= rooms; i++) {
+        totalWallSpace += getPositiveInput("Enter square footage for room " + to_string(i) + ": ", 0);
     }
-    return highest;
-}
-
-// Function to find the lowest score
-double findLowest(double scores[], int size) {
-    double lowest = scores[0];
-    for (int i = 1; i < size; i++) {
-        if (scores[i] < lowest) {
-            lowest = scores[i];
-        }
-    }
-    return lowest;
-}
-
-// Function to calculate the average score
-double calculateAverage(double scores[], int size, double highest, double lowest) {
-    double total = 0;
-    for (int i = 0; i < size; i++) {
-        total += scores[i];
-    }
-    return (total - highest - lowest) / (size - 2); // Subtract the highest and lowest
+    return totalWallSpace;
 }
 
 int main() {
-    const int NUM_JUDGES = 5;
-    double scores[NUM_JUDGES];
+    const int SQFT_PER_GALLON = 110;
+    const int LABOR_HOURS_PER_GALLON = 8;
+    const double LABOR_COST_PER_HOUR = 25.0;
 
-    // Input: Get scores from the user
-    for (int i = 0; i < NUM_JUDGES; i++) {
-        scores[i] = getJudgeScore(i + 1);
-    }
+    // Input
+    int rooms = getPositiveInput("Enter the number of rooms to be painted: ", 1);
+    double totalWallSpace = calculateWallSpace(rooms);
+    double pricePerGallon = getPositiveInput("Enter the price of paint per gallon (minimum $10): ", 10.0);
 
-    // Processing
-    double highest = findHighest(scores, NUM_JUDGES);
-    double lowest = findLowest(scores, NUM_JUDGES);
-    double finalScore = calculateAverage(scores, NUM_JUDGES, highest, lowest);
+    // Calculations
+    double gallonsRequired = ceil(totalWallSpace / SQFT_PER_GALLON);
+    double laborHours = (totalWallSpace / SQFT_PER_GALLON) * LABOR_HOURS_PER_GALLON;
+    double paintCost = gallonsRequired * pricePerGallon;
+    double laborCost = laborHours * LABOR_COST_PER_HOUR;
+    double totalCost = paintCost + laborCost;
 
-    // Output: Display the final score
+    // Output
     cout << fixed << setprecision(2);
-    cout << "The contestant's final score is: " << finalScore << endl;
+    cout << "\nPaint Job Estimate:" << endl;
+    cout << "------------------------" << endl;
+    cout << "Gallons of paint required: " << gallonsRequired << endl;
+    cout << "Hours of labor required: " << laborHours << endl;
+    cout << "Cost of paint: $" << paintCost << endl;
+    cout << "Labor charges: $" << laborCost << endl;
+    cout << "Total cost of job: $" << totalCost << endl;
 
     return 0;
 }
+
