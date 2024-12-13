@@ -1,35 +1,56 @@
 #include <iostream>
-#include <cstdlib> // For rand() and srand()
-#include <ctime>   // For time()
+#include <cmath> // for ceil()
+#include <iomanip>
 using namespace std;
 
-int main() {
-    // Initialize random seed
-    srand(time(0));
-
-    // Generate a random number between 1 and 100
-    int randomNumber = rand() % 100 + 1;
-    int guess;
-    int attempts = 0;
-
-    cout << "Guess the number (between 1 and 100):" << endl;
-
-    // Game loop
+// Function to get a positive number from the user
+double getPositiveInput(string prompt, double minValue) {
+    double value;
     do {
-        cout << "Enter your guess: ";
-        cin >> guess;
-        attempts++;
-
-        if (guess > randomNumber) {
-            cout << "Too high, try again." << endl;
-        } else if (guess < randomNumber) {
-            cout << "Too low, try again." << endl;
-        } else {
-            cout << "Congratulations! You guessed the number in " << attempts << " attempts." << endl;
+        cout << prompt;
+        cin >> value;
+        if (value < minValue) {
+            cout << "Error: Value must be at least " << minValue << ". Please try again." << endl;
         }
+    } while (value < minValue);
+    return value;
+}
 
-    } while (guess != randomNumber);
+// Function to calculate the total wall space
+double calculateWallSpace(int rooms) {
+    double totalWallSpace = 0;
+    for (int i = 1; i <= rooms; i++) {
+        totalWallSpace += getPositiveInput("Enter square footage for room " + to_string(i) + ": ", 0);
+    }
+    return totalWallSpace;
+}
+
+int main() {
+    const int SQFT_PER_GALLON = 110;
+    const int LABOR_HOURS_PER_GALLON = 8;
+    const double LABOR_COST_PER_HOUR = 25.0;
+
+    // Input
+    int rooms = getPositiveInput("Enter the number of rooms to be painted: ", 1);
+    double totalWallSpace = calculateWallSpace(rooms);
+    double pricePerGallon = getPositiveInput("Enter the price of paint per gallon (minimum $10): ", 10.0);
+
+    // Calculations
+    double gallonsRequired = ceil(totalWallSpace / SQFT_PER_GALLON);
+    double laborHours = (totalWallSpace / SQFT_PER_GALLON) * LABOR_HOURS_PER_GALLON;
+    double paintCost = gallonsRequired * pricePerGallon;
+    double laborCost = laborHours * LABOR_COST_PER_HOUR;
+    double totalCost = paintCost + laborCost;
+
+    // Output
+    cout << fixed << setprecision(2);
+    cout << "\nPaint Job Estimate:" << endl;
+    cout << "------------------------" << endl;
+    cout << "Gallons of paint required: " << gallonsRequired << endl;
+    cout << "Hours of labor required: " << laborHours << endl;
+    cout << "Cost of paint: $" << paintCost << endl;
+    cout << "Labor charges: $" << laborCost << endl;
+    cout << "Total cost of job: $" << totalCost << endl;
 
     return 0;
 }
-
