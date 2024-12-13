@@ -1,55 +1,22 @@
 #include <iostream>
-#include <string>
+#include <iomanip>
 using namespace std;
 
-// Function to get the number of accidents for a region
-int getAccidents(string region) {
-    int accidents;
-    do {
-        cout << "Enter the number of accidents in the " << region << " region: ";
-        cin >> accidents;
-        if (accidents < 0) {
-            cout << "Error: Accident number cannot be negative. Please try again." << endl;
-        }
-    } while (accidents < 0);
-    return accidents;
-}
-
-// Function to find the region with the fewest accidents
-string findSafestRegion(int north, int south, int east, int west, int central) {
-    int minAccidents = north;
-    string safestRegion = "North";
-
-    if (south < minAccidents) {
-        minAccidents = south;
-        safestRegion = "South";
-    }
-    if (east < minAccidents) {
-        minAccidents = east;
-        safestRegion = "East";
-    }
-    if (west < minAccidents) {
-        minAccidents = west;
-        safestRegion = "West";
-    }
-    if (central < minAccidents) {
-        minAccidents = central;
-        safestRegion = "Central";
-    }
-    return safestRegion + " (" + to_string(minAccidents) + " accidents)";
+// Function to convert Fahrenheit to Celsius
+double fahrenheitToCelsius(double fahrenheit) {
+    return (5.0 / 9.0) * (fahrenheit - 32);
 }
 
 int main() {
-    // Get accident data for all regions
-    int north = getAccidents("North");
-    int south = getAccidents("South");
-    int east = getAccidents("East");
-    int west = getAccidents("West");
-    int central = getAccidents("Central");
+    // Display the table header
+    cout << "Fahrenheit\tCelsius" << endl;
+    cout << "------------------------" << endl;
 
-    // Find and display the safest region
-    string safestRegion = findSafestRegion(north, south, east, west, central);
-    cout << "The safest region is: " << safestRegion << endl;
+    // Generate the table
+    for (int fahrenheit = 0; fahrenheit <= 20; ++fahrenheit) {
+        double celsius = fahrenheitToCelsius(fahrenheit);
+        cout << setw(10) << fahrenheit << "\t" << fixed << setprecision(2) << celsius << endl;
+    }
 
     return 0;
 }
